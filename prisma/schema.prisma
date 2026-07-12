@@ -1,0 +1,70 @@
+// Prisma schema for BlogCraft
+// Datasource: Supabase Postgres. `directUrl` is used for migrations,
+// `url` (pooled) for the running app.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum Category {
+  TECHNOLOGY
+  PROGRAMMING
+  ARTIFICIAL_INTELLIGENCE
+  MACHINE_LEARNING
+  TRAVEL
+  FOOD
+  BUSINESS
+  FINANCE
+  TUTORIALS
+  LIFESTYLE
+  PERSONAL
+  OPEN_SOURCE
+  OTHERS
+}
+
+model Blog {
+  id            String     @id @default(cuid())
+  slug          String     @unique
+  title         String
+  subtitle      String?
+  excerpt       String
+  content       String // Markdown
+  category      Category   @default(OTHERS)
+  tags          String[]   @default([])
+  author        String     @default("Editorial Team")
+  featuredImage String?
+  galleryImages String[]   @default([])
+  readingTime   Int        @default(1) // minutes
+  featured      Boolean    @default(false)
+  status        BlogStatus @default(DRAFT)
+  views         Int        @default(0)
+
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String[] @default([])
+  ogImage        String?
+  canonicalUrl   String?
+
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status, publishedAt])
+  @@index([category])
+  @@index([featured])
+  @@index([views])
+  // Full-text-ish search helpers
+  @@index([title])
+}
