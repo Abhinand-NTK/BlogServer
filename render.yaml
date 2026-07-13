@@ -9,7 +9,7 @@ services:
 
     envVars:
       - key: NODE_ENV
-        value: production
+        value: development
       - key: PORT
         value: 10000
       - key: DATABASE_URL
